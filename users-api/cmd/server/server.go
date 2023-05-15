@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	lis, err := net.Listen("tcp", ":3000")
+	lis, err := net.Listen("tcp", ":9090")
 	if err != nil {
 		log.Fatalf("unable to start server: %v", err)
 	}

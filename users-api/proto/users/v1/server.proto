@@ -1,15 +1,26 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+
+option go_package = "github.com/sysradium/petproject/users-api/proto/users1/v1;usersv1";
+
 package users.v1;
 
 service UsersService {
-  rpc List(ListRequest) returns (ListResponse) {}
+  rpc List(ListRequest) returns (ListResponse) {
+    option (google.api.http) = {get: "/v1"};
+  }
 }
-
 
 message ListRequest {
 }
 
 message ListResponse {
-  string rsp = 1;
+  repeated User users = 1;
+}
+
+
+message User {
+  string username = 1;
+  string email = 2;
 }

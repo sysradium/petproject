@@ -13,7 +13,15 @@ type Server struct {
 }
 
 func (s *Server) List(_ context.Context, _ *pb.ListRequest) (*pb.ListResponse, error) {
-	panic("not implemented") // TODO: Implement
+	return &pb.ListResponse{
+		Users: []*pb.User{{
+			Username: "foo",
+			Email:    "s@s.com",
+		}, {
+			Username: "someone",
+			Email:    "at@gmail.com",
+		}},
+	}, nil
 }
 
 func New(opts ...Option) *Server {

@@ -2,7 +2,10 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: github.com/sysradium/petproject/servicec/proto
+#   default: github.com/sysradium/petproject/users-api/proto
+#   except:
+#     - buf.build/googleapis/googleapis
+#     - buf.build/grpc-ecosystem/grpc-gateway
 plugins:
   - plugin: go
     out: proto
@@ -12,3 +15,8 @@ plugins:
     out: proto
     opt:
       - paths=source_relative
+  - plugin: buf.build/grpc-ecosystem/gateway
+    out: proto
+    opt:
+      - paths=source_relative
+      - generate_unbound_methods=true

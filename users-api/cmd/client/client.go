@@ -12,7 +12,7 @@ import (
 
 func main() {
 	conn, err := grpc.Dial(
-		"localhost:3000",
+		"localhost:9090",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
@@ -28,5 +28,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to get users: %+v", err)
 	}
-	fmt.Println(rsp)
+	fmt.Println(rsp.Users)
 }
