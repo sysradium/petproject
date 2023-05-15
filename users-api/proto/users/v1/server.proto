@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package users.v1;
+
+service UsersService {
+  rpc List(ListRequest) returns (ListResponse) {}
+}
+
+
+message ListRequest {
+}
+
+message ListResponse {
+  string rsp = 1;
+}

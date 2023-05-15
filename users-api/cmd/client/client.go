@@ -2,13 +2,12 @@ package main
 
 import (
 	"context"
-	"io"
+	"fmt"
 	"log"
 
-	pb "github.com/sysradium/petproject/users-api/proto/server/v1"
+	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func main() {
@@ -21,25 +20,13 @@ func main() {
 	}
 
 	defer conn.Close()
-	c := pb.NewGreeterServiceClient(
+	c := pb.NewUsersServiceClient(
 		conn,
 	)
 
-	stream, err := c.PullMessages(context.Background(), &emptypb.Empty{})
+	rsp, err := c.List(context.Background(), &pb.ListRequest{})
 	if err != nil {
-		log.Fatalf("unable to open stream: %+v", err)
+		log.Fatalf("unable to get users: %+v", err)
 	}
-
-	for {
-		rsp, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Printf("rsp: %v", rsp.Msg)
-	}
-
+	fmt.Println(rsp)
 }

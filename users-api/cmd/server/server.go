@@ -9,7 +9,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/sirupsen/logrus"
 	"github.com/sysradium/petproject/users-api/internal/app/server"
-	pb "github.com/sysradium/petproject/users-api/proto/server/v1"
+	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
 
 	"google.golang.org/grpc"
 )
@@ -62,7 +62,7 @@ func main() {
 		),
 	)
 
-	pb.RegisterGreeterServiceServer(srv, server.New(
+	pb.RegisterUsersServiceServer(srv, server.New(
 		server.WithLogger(logger),
 	))
 

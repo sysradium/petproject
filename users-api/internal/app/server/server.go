@@ -2,39 +2,18 @@ package server
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/sirupsen/logrus"
-	pb "github.com/sysradium/petproject/users-api/proto/server/v1"
+	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
 )
 
 type Server struct {
-	pb.UnimplementedGreeterServiceServer
+	pb.UnimplementedUsersServiceServer
 	logger logrus.FieldLogger
 }
 
-func (s *Server) PullMessages(_ *pb.PullMessagesRequest, ch pb.GreeterService_PullMessagesServer) error {
-	t := time.NewTicker(time.Second)
-	defer t.Stop()
-
-	i := 0
-	for range t.C {
-		s.logger.Debugf("sending message: %d", i)
-		msg := &pb.GreeterServicePullMessagesResponse{Msg: fmt.Sprintf("hi: %d", i)}
-		if err := ch.Send(msg); err != nil {
-			return err
-		}
-		i++
-	}
-
-	return nil
-}
-
-func (s *Server) SayHello(ctx context.Context, in *pb.GreeterServiceSayHelloRequest) (*pb.GreeterServiceSayHelloResponse, error) {
-	return &pb.GreeterServiceSayHelloResponse{
-		Rsp: in.Name,
-	}, nil
+func (s *Server) List(_ context.Context, _ *pb.ListRequest) (*pb.ListResponse, error) {
+	panic("not implemented") // TODO: Implement
 }
 
 func New(opts ...Option) *Server {
