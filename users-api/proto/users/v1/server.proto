@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/sysradium/petproject/users-api/proto/users1/v1;usersv1";
 
@@ -23,4 +24,5 @@ message ListResponse {
 message User {
   string username = 1;
   string email = 2;
+  google.protobuf.Timestamp registered_at = 3;
 }
