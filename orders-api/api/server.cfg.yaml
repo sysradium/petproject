@@ -1,0 +1,7 @@
+package: api
+output: api/orders-api.gen.go
+additional-imports:
+  - package: github.com/sysradium/petproject/orders-api/api/models
+generate:
+  echo-server: true
+  embedded-spec: true
