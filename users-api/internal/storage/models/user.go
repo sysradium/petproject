@@ -12,5 +12,6 @@ func (u *User) ToProto() *pb.User {
 	return &pb.User{
 		Username: u.Login,
 		Email:    u.Email,
+		Id:       u.Id,
 	}
 }

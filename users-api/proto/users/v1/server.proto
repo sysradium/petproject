@@ -40,4 +40,5 @@ message User {
   string username = 1;
   string email = 2;
   google.protobuf.Timestamp registered_at = 3;
+  string id = 4;
 }
