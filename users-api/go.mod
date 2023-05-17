@@ -3,10 +3,12 @@ module github.com/sysradium/petproject/users-api
 go 1.20
 
 require (
+	github.com/felixge/httpsnoop v1.0.3
 	github.com/golang/glog v1.1.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/sirupsen/logrus v1.9.0
+	github.com/soheilhy/cmux v0.1.5
 	github.com/stretchr/testify v1.7.0
 	github.com/tj/assert v0.0.3
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4
