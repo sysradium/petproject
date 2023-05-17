@@ -11,6 +11,21 @@ service UsersService {
   rpc List(ListRequest) returns (ListResponse) {
     option (google.api.http) = {get: "/v1"};
   }
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+        post: "/v1"
+        body: "*"
+    };
+  }
+}
+
+
+message CreateRequest {
+  User user = 1;
+}
+
+message CreateResponse {
+  string user_id = 1;
 }
 
 message ListRequest {

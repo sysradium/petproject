@@ -7,6 +7,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/sirupsen/logrus"
 	"github.com/sysradium/petproject/users-api/internal/app/server"
+	"github.com/sysradium/petproject/users-api/internal/storage/ephemeral"
 	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
 
 	"google.golang.org/grpc"
@@ -37,6 +38,7 @@ func main() {
 
 	pb.RegisterUsersServiceServer(srv, server.New(
 		server.WithLogger(logger),
+		server.WithStorage(ephemeral.New()),
 	))
 
 	if err := srv.Serve(lis); err != nil {
