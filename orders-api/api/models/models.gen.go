@@ -4,13 +4,13 @@
 package models
 
 import (
-	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
+	myuuid "github.com/google/uuid"
 )
 
 // Order defines model for Order.
 type Order struct {
-	Id   openapi_types.UUID `json:"id"`
-	Name string             `json:"name"`
+	Id   myuuid.UUID `json:"id"`
+	Name string      `json:"name"`
 }
 
 // PostOrdersJSONRequestBody defines body for PostOrders for application/json ContentType.

@@ -13,6 +13,7 @@ import (
 
 func main() {
 	e := echo.New()
+	e.HideBanner = true
 
 	swagger, err := api.GetSwagger()
 	if err != nil {
@@ -22,8 +23,10 @@ func main() {
 
 	swagger.Servers = nil
 
-	e.Use(echomiddleware.Logger())
-	e.Use(middleware.OapiRequestValidator(swagger))
+	e.Use(
+		echomiddleware.Logger(),
+		middleware.OapiRequestValidator(swagger),
+	)
 
 	api.RegisterHandlers(e, handler.New())
 

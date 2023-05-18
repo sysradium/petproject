@@ -35,9 +35,10 @@ components:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
-          pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
+          x-go-type: myuuid.UUID
+          x-go-type-import:
+            name: myuuid
+            path: github.com/google/uuid
         name:
           type: string
           example: Arthur Dent
