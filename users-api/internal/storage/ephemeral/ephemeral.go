@@ -2,9 +2,9 @@ package ephemeral
 
 import (
 	"context"
-	"strconv"
 	"sync"
 
+	"github.com/google/uuid"
 	"github.com/sysradium/petproject/users-api/internal/storage"
 	"github.com/sysradium/petproject/users-api/internal/storage/models"
 )
@@ -22,9 +22,10 @@ func (e *Ephemeral) Create(_ context.Context, u *models.User) (string, error) {
 
 	e.s = append(e.s, u)
 
-	u.Id = strconv.Itoa(len(e.s))
+	u.RowId = len(e.s)
+	u.Id = uuid.New()
 
-	return u.Id, nil
+	return u.Id.String(), nil
 }
 
 func (e *Ephemeral) List(_ context.Context) ([]*models.User, error) {

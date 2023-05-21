@@ -9,8 +9,9 @@ import (
 
 // Order defines model for Order.
 type Order struct {
-	Id   myuuid.UUID `json:"id"`
-	Name string      `json:"name"`
+	Id     myuuid.UUID `json:"id"`
+	Name   string      `json:"name"`
+	UserId myuuid.UUID `json:"user_id"`
 }
 
 // PostOrdersJSONRequestBody defines body for PostOrders for application/json ContentType.

@@ -6,16 +6,30 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sysradium/petproject/orders-api/api/models"
+	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
 )
 
-type Handler struct{}
+type Handler struct {
+	client pbUsers.UsersServiceClient
+}
 
 // Returns a list of orders.
 // (GET /orders)
 func (s *Handler) GetOrders(ctx echo.Context) error {
 	var rsp []*models.Order
 
-	rsp = append(rsp, &models.Order{Id: uuid.MustParse("9cb14230-b640-11ec-b909-0242ac120002")})
+	uRsp, err := s.client.List(
+		ctx.Request().Context(),
+		&pbUsers.ListRequest{},
+	)
+	if err != nil {
+		return err
+	}
+
+	rsp = append(rsp, &models.Order{
+		Id:     uuid.MustParse("9cb14230-b640-11ec-b909-0242ac120002"),
+		UserId: uuid.MustParse(uRsp.Users[0].Id),
+	})
 
 	ctx.JSON(http.StatusOK, rsp)
 	return nil
@@ -33,6 +47,8 @@ func (s *Handler) PostOrders(ctx echo.Context) error {
 	return nil
 }
 
-func New() *Handler {
-	return &Handler{}
+func New(c pbUsers.UsersServiceClient) *Handler {
+	return &Handler{
+		client: c,
+	}
 }

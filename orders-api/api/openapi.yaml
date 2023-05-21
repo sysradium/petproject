@@ -42,6 +42,12 @@ components:
         name:
           type: string
           example: Arthur Dent
+        user_id:
+          x-go-type: myuuid.UUID
+          x-go-type-import:
+            name: myuuid
+            path: github.com/google/uuid
       required:  
         - id
         - name
+        - user_id
