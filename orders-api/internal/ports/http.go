@@ -3,7 +3,6 @@ package ports
 import (
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/sysradium/petproject/orders-api/api"
@@ -24,26 +23,29 @@ type HttpServer struct {
 // Returns a list of orders.
 // (GET /orders)
 func (s *HttpServer) GetOrders(ctx echo.Context) error {
-	rsp := []*models.Order{}
 
-	for _, o := range []models.Order{
-		{Name: "foo", UserId: uuid.New()},
-	} {
+	orders, err := s.orderRepository.List(ctx.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	rsp := []*models.Order{}
+	for _, o := range orders {
+
 		_, err := s.client.Get(ctx.Request().Context(), &pbUsers.GetRequest{
-			Id: o.UserId.String(),
+			Id: o.UserID.String(),
 		})
 		if err != nil {
 			if e, ok := status.FromError(err); ok && e.Code() == codes.NotFound {
-				ctx.Logger().Warnj(log.JSON{"message": "skipping order", "id": o.Id, "user_id": o.UserId})
-
-				continue
+				ctx.Logger().Warnj(log.JSON{"message": "skipping order", "id": o.ID, "user_id": o.UserID})
 			}
-			return err
+			ctx.Logger().Error(err)
 		}
 
 		rsp = append(rsp, &models.Order{
-			Id:     o.Id,
-			UserId: o.UserId,
+			Id:     &o.ID,
+			UserId: o.UserID,
+			Name:   o.Name,
 		})
 	}
 
@@ -59,7 +61,22 @@ func (s *HttpServer) PostOrders(ctx echo.Context) error {
 		return err
 	}
 
-	ctx.NoContent(http.StatusCreated)
+	newOrder, err := s.orderRepository.Create(
+		ctx.Request().Context(),
+		order.Order{
+			Name:   u.Name,
+			UserID: u.UserId,
+		})
+
+	if err != nil {
+		return err
+	}
+
+	ctx.JSON(http.StatusCreated, &models.Order{
+		Id:     &newOrder.ID,
+		UserId: newOrder.UserID,
+		Name:   newOrder.Name,
+	})
 	return nil
 }
 

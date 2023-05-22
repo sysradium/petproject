@@ -47,9 +47,10 @@ func (e *Ephemeral) List(_ context.Context) ([]*order.Order, error) {
 	e.m.RLock()
 	defer e.m.RUnlock()
 
-	orders := make([]*order.Order, len(e.s))
+	orders := make([]*order.Order, 0, len(e.s))
 
 	for _, o := range e.s {
+		o := o
 		orders = append(orders, &o)
 	}
 

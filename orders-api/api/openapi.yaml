@@ -28,6 +28,12 @@ paths:
       responses: 
         '201':
           description: Created
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Order'
 
 components:
   schemas:
@@ -48,6 +54,5 @@ components:
             name: myuuid
             path: github.com/google/uuid
       required:  
-        - id
         - name
         - user_id

@@ -26,20 +26,27 @@ func TestListReturnsNothing(t *testing.T) {
 	assert.Empty(t, o)
 }
 
-func TestAdd(t *testing.T) {
+func TestCreate(t *testing.T) {
 
 	s := New()
 
-	o, err := s.Create(context.Background(), order.Order{
-		Name: "something",
-	})
+	var uuids []uuid.UUID
+	for _, name := range []string{"fruit", "vegetable"} {
+		o, err := s.Create(context.Background(), order.Order{
+			Name: name,
+		})
 
-	require.NoError(t, err)
-	require.NotNil(t, o)
+		require.NoError(t, err)
+		require.NotNil(t, o)
 
-	rsp, err := s.Get(context.Background(), o.ID)
-	require.NoError(t, err)
-	assert.Equal(t, o.ID.String(), rsp.ID.String())
+		uuids = append(uuids, o.ID)
+	}
+
+	for _, u := range uuids {
+		rsp, err := s.Get(context.Background(), u)
+		require.NoError(t, err)
+		assert.Equal(t, u.String(), rsp.ID.String())
+	}
 }
 
 func TestUpdate(t *testing.T) {
