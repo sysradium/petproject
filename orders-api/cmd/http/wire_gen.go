@@ -14,8 +14,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/sysradium/petproject/orders-api/api"
+	"github.com/sysradium/petproject/orders-api/internal/adapters/ephemeral"
 	"github.com/sysradium/petproject/orders-api/internal/app"
-	"github.com/sysradium/petproject/orders-api/internal/handler"
+	"github.com/sysradium/petproject/orders-api/internal/ports"
 	"github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -31,8 +32,9 @@ func Initialize(addr string) (*app.App, func(), error) {
 		return nil, nil, err
 	}
 	usersServiceClient := usersv1.NewUsersServiceClient(clientConn)
-	handlerHandler := handler.New(usersServiceClient)
-	appApp := app.New(echo, handlerHandler)
+	ephemeralEphemeral := ephemeral.New()
+	httpServer := ports.NewHttpServer(usersServiceClient, ephemeralEphemeral)
+	appApp := app.New(echo, httpServer)
 	return appApp, func() {
 		cleanup()
 	}, nil

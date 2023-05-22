@@ -3,12 +3,12 @@ package app
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/sysradium/petproject/orders-api/api"
-	"github.com/sysradium/petproject/orders-api/internal/handler"
+	"github.com/sysradium/petproject/orders-api/internal/ports"
 )
 
 type App struct {
 	e *echo.Echo
-	h *handler.Handler
+	h *ports.HttpServer
 }
 
 func (a *App) Register() {
@@ -26,7 +26,7 @@ func (a *App) Start() error {
 func (a *App) Stop() {
 }
 
-func New(e *echo.Echo, h *handler.Handler) *App {
+func New(e *echo.Echo, h *ports.HttpServer) *App {
 	return &App{
 		e: e,
 		h: h,

@@ -1,7 +1,6 @@
 //go:build wireinject
 // +build wireinject
 
-// wire.go
 package main
 
 import (
@@ -15,8 +14,10 @@ import (
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/sysradium/petproject/orders-api/api"
+	"github.com/sysradium/petproject/orders-api/internal/adapters/ephemeral"
 	"github.com/sysradium/petproject/orders-api/internal/app"
-	"github.com/sysradium/petproject/orders-api/internal/handler"
+	"github.com/sysradium/petproject/orders-api/internal/domain/order"
+	"github.com/sysradium/petproject/orders-api/internal/ports"
 	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -61,8 +62,10 @@ func Initialize(addr string) (*app.App, func(), error) {
 	wire.Build(
 		newGrpcClient,
 		wire.Bind(new(grpc.ClientConnInterface), new(*grpc.ClientConn)),
+		wire.Bind(new(order.Repository), new(*ephemeral.Ephemeral)),
 		pbUsers.NewUsersServiceClient,
-		handler.New,
+		ports.NewHttpServer,
+		ephemeral.New,
 		NewEcho,
 		app.New,
 	)

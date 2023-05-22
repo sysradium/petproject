@@ -1,4 +1,4 @@
-package handler
+package ports
 
 import (
 	"net/http"
@@ -7,18 +7,20 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/sysradium/petproject/orders-api/api/models"
+	"github.com/sysradium/petproject/orders-api/internal/domain/order"
 	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-type Handler struct {
-	client pbUsers.UsersServiceClient
+type HttpServer struct {
+	client          pbUsers.UsersServiceClient
+	orderRepository order.Repository
 }
 
 // Returns a list of orders.
 // (GET /orders)
-func (s *Handler) GetOrders(ctx echo.Context) error {
+func (s *HttpServer) GetOrders(ctx echo.Context) error {
 	rsp := []*models.Order{}
 
 	for _, o := range []models.Order{
@@ -48,7 +50,7 @@ func (s *Handler) GetOrders(ctx echo.Context) error {
 
 // Creates a new order
 // (POST /orders)
-func (s *Handler) PostOrders(ctx echo.Context) error {
+func (s *HttpServer) PostOrders(ctx echo.Context) error {
 	u := &models.PostOrdersJSONRequestBody{}
 	if err := ctx.Bind(u); err != nil {
 		return err
@@ -58,8 +60,9 @@ func (s *Handler) PostOrders(ctx echo.Context) error {
 	return nil
 }
 
-func New(c pbUsers.UsersServiceClient) *Handler {
-	return &Handler{
-		client: c,
+func NewHttpServer(c pbUsers.UsersServiceClient, r order.Repository) *HttpServer {
+	return &HttpServer{
+		client:          c,
+		orderRepository: r,
 	}
 }
