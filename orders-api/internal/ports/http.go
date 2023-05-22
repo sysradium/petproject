@@ -6,12 +6,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"github.com/sysradium/petproject/orders-api/api"
 	"github.com/sysradium/petproject/orders-api/api/models"
 	"github.com/sysradium/petproject/orders-api/internal/domain/order"
 	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+var _ api.ServerInterface = (*HttpServer)(nil)
 
 type HttpServer struct {
 	client          pbUsers.UsersServiceClient
