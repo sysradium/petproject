@@ -5,8 +5,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"github.com/sysradium/petproject/orders-api/api/models"
 	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Handler struct {
@@ -16,20 +19,28 @@ type Handler struct {
 // Returns a list of orders.
 // (GET /orders)
 func (s *Handler) GetOrders(ctx echo.Context) error {
-	var rsp []*models.Order
+	rsp := []*models.Order{}
 
-	uRsp, err := s.client.List(
-		ctx.Request().Context(),
-		&pbUsers.ListRequest{},
-	)
-	if err != nil {
-		return err
+	for _, o := range []models.Order{
+		{Name: "foo", UserId: uuid.New()},
+	} {
+		_, err := s.client.Get(ctx.Request().Context(), &pbUsers.GetRequest{
+			Id: o.UserId.String(),
+		})
+		if err != nil {
+			if e, ok := status.FromError(err); ok && e.Code() == codes.NotFound {
+				ctx.Logger().Warnj(log.JSON{"message": "skipping order", "id": o.Id, "user_id": o.UserId})
+
+				continue
+			}
+			return err
+		}
+
+		rsp = append(rsp, &models.Order{
+			Id:     o.Id,
+			UserId: o.UserId,
+		})
 	}
-
-	rsp = append(rsp, &models.Order{
-		Id:     uuid.MustParse("9cb14230-b640-11ec-b909-0242ac120002"),
-		UserId: uuid.MustParse(uRsp.Users[0].Id),
-	})
 
 	ctx.JSON(http.StatusOK, rsp)
 	return nil

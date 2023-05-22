@@ -8,6 +8,9 @@ option go_package = "github.com/sysradium/petproject/users-api/proto/users1/v1;u
 package users.v1;
 
 service UsersService {
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {get: "/v1/{id}"};
+  }
   rpc List(ListRequest) returns (ListResponse) {
     option (google.api.http) = {get: "/v1"};
   }
@@ -19,6 +22,14 @@ service UsersService {
   }
 }
 
+
+message GetRequest {
+  string id = 1;
+}
+
+message GetResponse {
+  User user = 1;
+}
 
 message CreateRequest {
   User user = 1;

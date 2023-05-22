@@ -11,9 +11,11 @@ require (
 	github.com/getkin/kin-openapi v0.117.0
 	github.com/golang/glog v1.1.1
 	github.com/google/uuid v1.3.0
+	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/labstack/echo/v4 v4.10.2
+	github.com/labstack/gommon v0.4.0
 	github.com/sirupsen/logrus v1.9.2
 	github.com/soheilhy/cmux v0.1.5
 	github.com/stretchr/testify v1.8.3
@@ -48,7 +50,6 @@ require (
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.15.14 // indirect
-	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

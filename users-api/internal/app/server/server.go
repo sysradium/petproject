@@ -2,11 +2,15 @@ package server
 
 import (
 	"context"
+	"errors"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/sysradium/petproject/users-api/internal/storage"
 	"github.com/sysradium/petproject/users-api/internal/storage/models"
 	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Server struct {
@@ -28,6 +32,21 @@ func (s *Server) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateR
 	return &pb.CreateResponse{
 		UserId: u.Id.String(),
 	}, nil
+}
+
+func (s *Server) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
+	rsp, err := s.st.Get(ctx, uuid.MustParse(req.Id))
+	if err == nil {
+		return &pb.GetResponse{
+			User: rsp.ToProto(),
+		}, nil
+	}
+
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+
+	return nil, err
 }
 
 func (s *Server) List(ctx context.Context, _ *pb.ListRequest) (*pb.ListResponse, error) {
