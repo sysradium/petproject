@@ -3,6 +3,7 @@ package models
 import (
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -10,7 +11,7 @@ import (
 func TestToProto(t *testing.T) {
 
 	u := &User{
-		Id:    "1-1-1-1",
+		Id:    uuid.New(),
 		Login: "peter",
 		Email: "peter@mail.com",
 	}
@@ -20,5 +21,5 @@ func TestToProto(t *testing.T) {
 
 	assert.Equal(t, u.Login, p.Username)
 	assert.Equal(t, u.Email, p.Email)
-	assert.Equal(t, u.Id, p.Id)
+	assert.Equal(t, u.Id.String(), p.Id)
 }

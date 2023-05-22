@@ -16,7 +16,7 @@ type Server struct {
 }
 
 func (s *Server) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
-	userId, err := s.st.Create(ctx, &models.User{
+	u, err := s.st.Create(ctx, &models.User{
 		Email: req.User.GetEmail(),
 	})
 
@@ -26,7 +26,7 @@ func (s *Server) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateR
 	}
 
 	return &pb.CreateResponse{
-		UserId: userId,
+		UserId: u.Id.String(),
 	}, nil
 }
 

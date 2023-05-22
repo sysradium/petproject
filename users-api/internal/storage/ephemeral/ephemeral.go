@@ -13,28 +13,43 @@ var _ storage.Storage = (*Ephemeral)(nil)
 
 type Ephemeral struct {
 	m sync.RWMutex
-	s []*models.User
+	s map[string]*models.User
 }
 
-func (e *Ephemeral) Create(_ context.Context, u *models.User) (string, error) {
+func (e *Ephemeral) Get(_ context.Context, id uuid.UUID) (models.User, error) {
+	if u, ok := e.s[id.String()]; ok {
+		return *u, nil
+	}
+
+	return models.User{}, storage.ErrNotFound
+}
+
+func (e *Ephemeral) Create(_ context.Context, u *models.User) (models.User, error) {
 	e.m.Lock()
 	defer e.m.Unlock()
 
-	e.s = append(e.s, u)
-
-	u.RowId = len(e.s)
 	u.Id = uuid.New()
 
-	return u.Id.String(), nil
+	e.s[u.Id.String()] = u
+
+	return *u, nil
 }
 
 func (e *Ephemeral) List(_ context.Context) ([]*models.User, error) {
 	e.m.RLock()
 	defer e.m.RUnlock()
 
-	return e.s, nil
+	var rsp []*models.User
+
+	for _, u := range e.s {
+		rsp = append(rsp, u)
+	}
+
+	return rsp, nil
 }
 
 func New() *Ephemeral {
-	return &Ephemeral{}
+	return &Ephemeral{
+		s: make(map[string]*models.User),
+	}
 }
