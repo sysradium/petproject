@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/sysradium/petproject/orders-api/api/events/v1;v1events";
+
+message OrderBooked {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+}

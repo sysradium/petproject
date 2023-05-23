@@ -10,8 +10,9 @@ services:
 
   kafka:
     image: docker.io/bitnami/kafka:3.4
+    hostname: "localhost"
     ports:
-      - "9092:9092"
+      - "127.0.0.1:9092:9092"
     volumes:
       - "kafka_data:/bitnami"
     environment:

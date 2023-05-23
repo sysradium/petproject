@@ -34,7 +34,7 @@ func (s structHandler) Handler(msg *message.Message) ([]*message.Message, error)
 func newPublisher() message.Publisher {
 	publisher, err := kafka.NewPublisher(
 		kafka.PublisherConfig{
-			Brokers:   []string{"kafka:9092"},
+			Brokers:   []string{"localhost:9092"},
 			Marshaler: kafka.DefaultMarshaler{},
 		},
 		watermill.NewStdLogger(true, true),
@@ -80,7 +80,7 @@ func main() {
 
 	pubSub, err := kafka.NewSubscriber(
 		kafka.SubscriberConfig{
-			Brokers:               []string{"kafka:9092"},
+			Brokers:               []string{"localhost:9092"},
 			Unmarshaler:           kafka.DefaultMarshaler{},
 			OverwriteSaramaConfig: saramaSubscriberConfig,
 			ConsumerGroup:         "test_consumer_group",

@@ -5,16 +5,16 @@ import (
 )
 
 func main() {
-	app, cleanup, err := Initialize("localhost:8080")
+	server, cleanup, err := Initialize("localhost:8080")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer cleanup()
 
-	app.Register()
-	if err := app.Start(); err != nil {
+	server.Register()
+	if err := server.Start(); err != nil {
 		log.Fatal(err)
 	}
 
-	app.Stop()
+	server.Stop()
 }

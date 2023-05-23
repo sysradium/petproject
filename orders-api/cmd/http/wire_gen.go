@@ -16,6 +16,7 @@ import (
 	"github.com/sysradium/petproject/orders-api/api"
 	"github.com/sysradium/petproject/orders-api/internal/adapters/ephemeral"
 	"github.com/sysradium/petproject/orders-api/internal/app"
+	"github.com/sysradium/petproject/orders-api/internal/app/server"
 	"github.com/sysradium/petproject/orders-api/internal/ports"
 	"github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc"
@@ -25,7 +26,7 @@ import (
 
 // Injectors from wire.go:
 
-func Initialize(addr GrpcConnString) (*app.App, func(), error) {
+func Initialize(addr GrpcConnString) (*server.Server, func(), error) {
 	echo := NewEcho()
 	clientConn, cleanup, err := newGrpcClient(addr)
 	if err != nil {
@@ -33,9 +34,10 @@ func Initialize(addr GrpcConnString) (*app.App, func(), error) {
 	}
 	usersServiceClient := usersv1.NewUsersServiceClient(clientConn)
 	ephemeralEphemeral := ephemeral.New()
-	httpServer := ports.NewHttpServer(usersServiceClient, ephemeralEphemeral)
-	appApp := app.New(echo, httpServer)
-	return appApp, func() {
+	appApp := app.NewApplication(ephemeralEphemeral)
+	httpServer := ports.NewHttpServer(usersServiceClient, appApp)
+	serverServer := server.New(echo, httpServer)
+	return serverServer, func() {
 		cleanup()
 	}, nil
 }

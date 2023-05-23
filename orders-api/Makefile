@@ -4,6 +4,7 @@ gen::
 	oapi-codegen -config api/server.cfg.yaml api/openapi.yaml
 	oapi-codegen -config api/models.yaml api/openapi.yaml
 	wire cmd/http/wire.go
+	buf generate
 
 test::
 	go test -v ./...

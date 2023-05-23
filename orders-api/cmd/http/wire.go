@@ -16,6 +16,7 @@ import (
 	"github.com/sysradium/petproject/orders-api/api"
 	"github.com/sysradium/petproject/orders-api/internal/adapters/ephemeral"
 	"github.com/sysradium/petproject/orders-api/internal/app"
+	"github.com/sysradium/petproject/orders-api/internal/app/server"
 	"github.com/sysradium/petproject/orders-api/internal/domain/order"
 	"github.com/sysradium/petproject/orders-api/internal/ports"
 	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
@@ -60,7 +61,7 @@ func NewEcho() *echo.Echo {
 	return e
 }
 
-func Initialize(addr GrpcConnString) (*app.App, func(), error) {
+func Initialize(addr GrpcConnString) (*server.Server, func(), error) {
 	wire.Build(
 		newGrpcClient,
 		wire.Bind(new(grpc.ClientConnInterface), new(*grpc.ClientConn)),
@@ -68,8 +69,9 @@ func Initialize(addr GrpcConnString) (*app.App, func(), error) {
 		pbUsers.NewUsersServiceClient,
 		ports.NewHttpServer,
 		ephemeral.New,
+		app.NewApplication,
 		NewEcho,
-		app.New,
+		server.New,
 	)
-	return &app.App{}, func() {}, nil
+	return &server.Server{}, func() {}, nil
 }

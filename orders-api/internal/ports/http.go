@@ -7,7 +7,9 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/sysradium/petproject/orders-api/api"
 	"github.com/sysradium/petproject/orders-api/api/models"
-	"github.com/sysradium/petproject/orders-api/internal/domain/order"
+	"github.com/sysradium/petproject/orders-api/internal/app"
+	"github.com/sysradium/petproject/orders-api/internal/app/commands"
+	"github.com/sysradium/petproject/orders-api/internal/app/queries"
 	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,15 +18,18 @@ import (
 var _ api.ServerInterface = (*HttpServer)(nil)
 
 type HttpServer struct {
-	client          pbUsers.UsersServiceClient
-	orderRepository order.Repository
+	client pbUsers.UsersServiceClient
+	app    app.App
 }
 
 // Returns a list of orders.
 // (GET /orders)
 func (s *HttpServer) GetOrders(ctx echo.Context) error {
 
-	orders, err := s.orderRepository.List(ctx.Request().Context())
+	orders, err := s.app.Queries.ListBookedOrders.Handle(
+		ctx.Request().Context(),
+		queries.BookedOrders{},
+	)
 	if err != nil {
 		return err
 	}
@@ -61,9 +66,9 @@ func (s *HttpServer) PostOrders(ctx echo.Context) error {
 		return err
 	}
 
-	newOrder, err := s.orderRepository.Create(
+	newOrder, err := s.app.Commands.BookOrder.Handle(
 		ctx.Request().Context(),
-		order.Order{
+		commands.BookOrder{
 			Name:   u.Name,
 			UserID: u.UserId,
 		})
@@ -80,9 +85,9 @@ func (s *HttpServer) PostOrders(ctx echo.Context) error {
 	return nil
 }
 
-func NewHttpServer(c pbUsers.UsersServiceClient, r order.Repository) *HttpServer {
+func NewHttpServer(c pbUsers.UsersServiceClient, app app.App) *HttpServer {
 	return &HttpServer{
-		client:          c,
-		orderRepository: r,
+		client: c,
+		app:    app,
 	}
 }

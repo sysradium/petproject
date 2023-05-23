@@ -38,7 +38,7 @@ func main() {
 
 	publisher, err := kafka.NewPublisher(
 		kafka.PublisherConfig{
-			Brokers:   []string{"kafka:9092"},
+			Brokers:   []string{"localhost:9092"},
 			Marshaler: kafka.DefaultMarshaler{},
 		},
 		watermill.NewStdLogger(true, true),

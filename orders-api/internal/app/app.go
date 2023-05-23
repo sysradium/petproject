@@ -1,34 +1,31 @@
 package app
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/sysradium/petproject/orders-api/api"
-	"github.com/sysradium/petproject/orders-api/internal/ports"
+	"github.com/sysradium/petproject/orders-api/internal/app/commands"
+	"github.com/sysradium/petproject/orders-api/internal/app/queries"
+	"github.com/sysradium/petproject/orders-api/internal/domain/order"
 )
 
 type App struct {
-	e *echo.Echo
-	h *ports.HttpServer
+	Commands Commands
+	Queries  Queries
 }
 
-func (a *App) Register() {
-	api.RegisterHandlersWithBaseURL(
-		a.e,
-		a.h,
-		"v1",
-	)
+type Commands struct {
+	BookOrder commands.BookOrderHandler
 }
 
-func (a *App) Start() error {
-	return a.e.Start(":8081")
+type Queries struct {
+	ListBookedOrders queries.BookedOrdersHandler
 }
 
-func (a *App) Stop() {
-}
-
-func New(e *echo.Echo, h *ports.HttpServer) *App {
-	return &App{
-		e: e,
-		h: h,
+func NewApplication(o order.Repository) App {
+	return App{
+		Commands: Commands{
+			BookOrder: commands.NewBookOrderHandler(o),
+		},
+		Queries: Queries{
+			ListBookedOrders: queries.NewBookedOrderHandler(o),
+		},
 	}
 }
