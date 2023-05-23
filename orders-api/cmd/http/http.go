@@ -6,8 +6,8 @@ import (
 
 func main() {
 	server, cleanup, err := Initialize(
-		"localhost:8080",
-		"localhost:9092",
+		"users-api:8080",
+		"kafka:9092",
 	)
 	if err != nil {
 		log.Fatal(err)

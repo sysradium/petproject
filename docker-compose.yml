@@ -1,16 +1,33 @@
 version: "2"
 
 services:
-  app:
+  users-api:
     image: golang:1.20-alpine
     depends_on:
       - kafka
     volumes:
       - ./:/usr/src/app
+    command: go run /usr/src/app/users-api/cmd/combined/combined.go
+    working_dir: /usr/src/app
+
+  orders-api:
+    image: golang:1.20-alpine
+    links:
+      - users-api:users-api
+      - kafka:kafka
+    depends_on:
+      - kafka
+      - users-api
+    volumes:
+      - ./:/usr/src/app
+    command: go run /usr/src/app/orders-api/cmd/http/http.go /usr/src/app/orders-api/cmd/http/wire_gen.go
+    working_dir: /usr/src/app
+    ports:
+      - "127.0.0.1:8081:8081"
 
   kafka:
     image: docker.io/bitnami/kafka:3.4
-    hostname: "localhost"
+    hostname: "kafka"
     ports:
       - "127.0.0.1:9092:9092"
     volumes:
