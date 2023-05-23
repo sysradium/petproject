@@ -23,12 +23,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func newGrpcClient(addr string) (*grpc.ClientConn, func(), error) {
+type GrpcConnString string
+
+func newGrpcClient(addr GrpcConnString) (*grpc.ClientConn, func(), error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	conn, err := grpc.Dial(addr, opts...)
+	conn, err := grpc.Dial(string(addr), opts...)
 	cleanup := func() {
 		conn.Close()
 	}
@@ -58,7 +60,7 @@ func NewEcho() *echo.Echo {
 	return e
 }
 
-func Initialize(addr string) (*app.App, func(), error) {
+func Initialize(addr GrpcConnString) (*app.App, func(), error) {
 	wire.Build(
 		newGrpcClient,
 		wire.Bind(new(grpc.ClientConnInterface), new(*grpc.ClientConn)),
