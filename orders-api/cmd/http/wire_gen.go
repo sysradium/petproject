@@ -7,71 +7,40 @@
 package main
 
 import (
-	"fmt"
-	middleware2 "github.com/deepmap/oapi-codegen/pkg/middleware"
-	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
-	"github.com/sysradium/petproject/orders-api/api"
 	"github.com/sysradium/petproject/orders-api/internal/adapters/ephemeral"
 	"github.com/sysradium/petproject/orders-api/internal/app"
 	"github.com/sysradium/petproject/orders-api/internal/app/server"
 	"github.com/sysradium/petproject/orders-api/internal/ports"
+	"github.com/sysradium/petproject/orders-api/internal/providers"
 	"github.com/sysradium/petproject/users-api/proto/users/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"os"
 )
 
 // Injectors from wire.go:
 
-func Initialize(addr GrpcConnString) (*server.Server, func(), error) {
-	echo := NewEcho()
-	clientConn, cleanup, err := newGrpcClient(addr)
+func Initialize(addr providers.GrpcConnString, kafkaAddr providers.KafkaAddress) (*server.Server, func(), error) {
+	echo := providers.NewEcho()
+	clientConn, cleanup, err := providers.NewGrpcClient(addr)
 	if err != nil {
 		return nil, nil, err
 	}
 	usersServiceClient := usersv1.NewUsersServiceClient(clientConn)
 	ephemeralEphemeral := ephemeral.New()
-	appApp := app.NewApplication(ephemeralEphemeral)
+	router, err := providers.NewRouter()
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	loggerAdapter := providers.NewLogger()
+	v := providers.NewEventHandlers()
+	eventBus, err := providers.NewCQRSFacade(kafkaAddr, router, loggerAdapter, v)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	appApp := app.NewApplication(ephemeralEphemeral, eventBus)
 	httpServer := ports.NewHttpServer(usersServiceClient, appApp)
-	serverServer := server.New(echo, httpServer)
+	serverServer := server.New(echo, httpServer, router)
 	return serverServer, func() {
 		cleanup()
 	}, nil
-}
-
-// wire.go:
-
-type GrpcConnString string
-
-func newGrpcClient(addr GrpcConnString) (*grpc.ClientConn, func(), error) {
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-
-	conn, err := grpc.Dial(string(addr), opts...)
-	cleanup := func() {
-		conn.Close()
-	}
-	return conn, cleanup, err
-}
-
-func NewEcho() *echo.Echo {
-	e := echo.New()
-	e.HideBanner = true
-	e.Logger.SetLevel(log.DEBUG)
-
-	swagger, err := api.GetSwagger()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error loading swagger spec\n: %s", err)
-		os.Exit(1)
-	}
-
-	swagger.Servers = openapi3.Servers{
-		{URL: "/v1"},
-	}
-
-	e.Use(middleware.Logger(), middleware2.OapiRequestValidator(swagger))
-
-	return e
 }

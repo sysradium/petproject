@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/Shopify/sarama"
@@ -10,31 +9,14 @@ import (
 	"github.com/ThreeDotsLabs/watermill-kafka/v2/pkg/kafka"
 	"github.com/ThreeDotsLabs/watermill/components/cqrs"
 	"github.com/ThreeDotsLabs/watermill/message"
-	events "github.com/sysradium/petproject/orders-api/api/events/v1"
+	"github.com/ThreeDotsLabs/watermill/message/router/middleware"
 	"github.com/sysradium/petproject/orders-api/internal/adapters/kafka/encoding"
+	"github.com/sysradium/petproject/orders-api/internal/ports"
 )
 
 type KafkaAddress string
 
-type SendEmailOnOrderBooked struct {
-}
-
-func (o SendEmailOnOrderBooked) HandlerName() string {
-	return "OnOrderBooked"
-}
-
-func (SendEmailOnOrderBooked) NewEvent() interface{} {
-	return &events.OrderBooked{}
-}
-
-func (o SendEmailOnOrderBooked) Handle(ctx context.Context, e interface{}) error {
-	event := e.(*events.OrderBooked)
-	fmt.Println("received event", event)
-
-	return nil
-}
-
-func newCQRSFacade(addr KafkaAddress) (*cqrs.Facade, *message.Router) {
+func NewCQRSFacade(addr KafkaAddress) (*cqrs.Facade, *message.Router) {
 	logger := watermill.NewStdLogger(false, false)
 	cqrsMarshaler := encoding.ProtobufMarshaler{}
 
@@ -71,7 +53,7 @@ func newCQRSFacade(addr KafkaAddress) (*cqrs.Facade, *message.Router) {
 		panic(err)
 	}
 
-	// router.AddMiddleware(middleware.Recoverer)
+	router.AddMiddleware(middleware.Recoverer)
 
 	cqrsFacade, err := cqrs.NewFacade(cqrs.FacadeConfig{
 		CommandsPublisher: publisher,
@@ -87,7 +69,7 @@ func newCQRSFacade(addr KafkaAddress) (*cqrs.Facade, *message.Router) {
 			return commandName
 		},
 		EventHandlers: func(cb *cqrs.CommandBus, eb *cqrs.EventBus) []cqrs.EventHandler {
-			return []cqrs.EventHandler{&SendEmailOnOrderBooked{}}
+			return []cqrs.EventHandler{&ports.SendEmailOnOrderBooked{}}
 		},
 		EventsSubscriberConstructor: func(handlerName string) (message.Subscriber, error) {
 			saramaSubscriberConfig := kafka.DefaultSaramaSubscriberConfig()
@@ -117,11 +99,13 @@ func newCQRSFacade(addr KafkaAddress) (*cqrs.Facade, *message.Router) {
 }
 
 func main2() {
-	facade, router := newCQRSFacade("localhost:9092")
+	facade, router := NewCQRSFacade("localhost:9092")
 
-	if err := facade.EventBus().Publish(context.Background(), &events.OrderBooked{Name: "vegetables"}); err != nil {
-		log.Fatal(err)
-	}
+	/*
+		if err := facade.EventBus().Publish(context.Background(), &events.OrderBooked{Name: "vegetables"}); err != nil {
+			log.Fatal(err)
+		}
+	*/
 
 	if err := router.Run(context.Background()); err != nil {
 		log.Fatal(err)

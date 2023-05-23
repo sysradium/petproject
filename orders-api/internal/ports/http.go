@@ -85,7 +85,10 @@ func (s *HttpServer) PostOrders(ctx echo.Context) error {
 	return nil
 }
 
-func NewHttpServer(c pbUsers.UsersServiceClient, app app.App) *HttpServer {
+func NewHttpServer(
+	c pbUsers.UsersServiceClient,
+	app app.App,
+) *HttpServer {
 	return &HttpServer{
 		client: c,
 		app:    app,
