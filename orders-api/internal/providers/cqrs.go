@@ -7,7 +7,7 @@ import (
 	"github.com/ThreeDotsLabs/watermill/components/cqrs"
 	"github.com/ThreeDotsLabs/watermill/message"
 	waterllMiddleware "github.com/ThreeDotsLabs/watermill/message/router/middleware"
-	"github.com/sysradium/petproject/orders-api/internal/adapters/kafka/encoding"
+	"github.com/sysradium/petproject/orders-api/internal/lib/common"
 )
 
 type KafkaAddress string
@@ -28,7 +28,7 @@ func NewCQRSFacade(
 	logger watermill.LoggerAdapter,
 	handlers []cqrs.EventHandler,
 ) (*cqrs.EventBus, error) {
-	cqrsMarshaler := encoding.ProtobufMarshaler{}
+	cqrsMarshaler := common.ProtobufMarshaler{}
 
 	saramaSubscriberConfig := kafka.DefaultSaramaSubscriberConfig()
 	// equivalent of auto.offset.reset: earliest

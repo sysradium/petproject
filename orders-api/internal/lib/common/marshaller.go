@@ -1,4 +1,4 @@
-package encoding
+package common
 
 import (
 	"reflect"
@@ -7,8 +7,8 @@ import (
 	"github.com/ThreeDotsLabs/watermill/components/cqrs"
 	"github.com/ThreeDotsLabs/watermill/message"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
+	"google.golang.org/protobuf/proto"
 )
 
 // ProtobufMarshaler is the default Protocol Buffers marshaler.
