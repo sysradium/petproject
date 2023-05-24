@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/ThreeDotsLabs/watermill/message"
-	handler "github.com/sysradium/petproject/email-notifier/internal/handlers"
+	"github.com/sysradium/petproject/email-notifier/internal/providers"
 )
 
 type App struct {
 	router     *message.Router
 	subscriber message.Subscriber
+	handlers   providers.EventHandlers
 }
 
 func (a *App) Start() error {
@@ -19,18 +20,25 @@ func (a *App) Start() error {
 func (a *App) Stop() {}
 
 func (a *App) RegisterHandlers() error {
-	a.router.AddNoPublisherHandler(
-		"print_incoming_messages",
-		"v1events.OrderBooked",
-		a.subscriber,
-		handler.New(&handler.OrderBookedHandler{}),
-	)
+	for topic, handler := range a.handlers {
+		a.router.AddNoPublisherHandler(
+			"print_incoming_messages",
+			topic,
+			a.subscriber,
+			handler,
+		)
+	}
 
 	return nil
 }
-func New(r *message.Router, s message.Subscriber) *App {
+func New(
+	r *message.Router,
+	s message.Subscriber,
+	handlers providers.EventHandlers,
+) *App {
 	return &App{
 		router:     r,
 		subscriber: s,
+		handlers:   handlers,
 	}
 }

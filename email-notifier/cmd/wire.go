@@ -14,6 +14,8 @@ func Initialize() (*app.App, error) {
 		providers.ProvideLogger,
 		providers.ProvideSubscriber,
 		providers.ProvideRouter,
+		providers.ProvideEventHandlers,
+		providers.ProvideEmailNotifier,
 		app.New,
 	)
 	return &app.App{}, nil

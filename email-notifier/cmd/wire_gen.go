@@ -23,6 +23,8 @@ func Initialize() (*app.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	appApp := app.New(router, subscriber)
+	sender := providers.ProvideEmailNotifier()
+	eventHandlers := providers.ProvideEventHandlers(sender)
+	appApp := app.New(router, subscriber, eventHandlers)
 	return appApp, nil
 }
