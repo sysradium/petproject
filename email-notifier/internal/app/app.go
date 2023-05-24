@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/ThreeDotsLabs/watermill/message"
-	"github.com/sysradium/petproject/email-notifier/internal/providers"
+	"github.com/sysradium/petproject/email-notifier/internal/handlers"
 )
 
 type App struct {
 	router     *message.Router
 	subscriber message.Subscriber
-	handlers   providers.EventHandlers
+	handlers   handlers.EventHandlers
 }
 
 func (a *App) Start() error {
@@ -34,7 +34,7 @@ func (a *App) RegisterHandlers() error {
 func New(
 	r *message.Router,
 	s message.Subscriber,
-	handlers providers.EventHandlers,
+	handlers handlers.EventHandlers,
 ) *App {
 	return &App{
 		router:     r,

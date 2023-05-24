@@ -1,17 +1,18 @@
 package providers
 
 import (
-	"github.com/ThreeDotsLabs/watermill/message"
+	"github.com/sysradium/petproject/email-notifier/internal/decorators"
 	"github.com/sysradium/petproject/email-notifier/internal/email"
-	handler "github.com/sysradium/petproject/email-notifier/internal/handlers"
+	"github.com/sysradium/petproject/email-notifier/internal/handlers"
+	events "github.com/sysradium/petproject/orders-api/api/events/v1"
 )
-
-type EventHandlers map[string]func(msg *message.Message) error
 
 func ProvideEventHandlers(
 	notifier email.Sender,
-) EventHandlers {
-	return EventHandlers{
-		"v1events.OrderBooked": handler.New(handler.NewOrderBookedHandler(notifier)),
+) handlers.EventHandlers {
+	return handlers.EventHandlers{
+		"v1events.OrderBooked": decorators.Unmarshal[*events.OrderBooked](
+			handlers.NewOrderBookedHandler(notifier),
+		),
 	}
 }

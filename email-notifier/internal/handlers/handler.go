@@ -1,19 +1,10 @@
-package handler
+package handlers
 
-import (
-	"github.com/ThreeDotsLabs/watermill/message"
-	"google.golang.org/protobuf/proto"
-)
+import "github.com/ThreeDotsLabs/watermill/message"
 
-func New(h Handler) func(msg *message.Message) error {
-	return func(msg *message.Message) error {
-		e := h.NewEvent().(proto.Message)
-		proto.Unmarshal(msg.Payload, e)
-		return h.Handle(e)
-	}
-}
+type EventHandlers map[string]func(msg *message.Message) error
 
-type Handler interface {
-	Handle(e interface{}) error
+type Handler[T any] interface {
+	Handle(e T) error
 	NewEvent() interface{}
 }
