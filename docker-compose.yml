@@ -10,6 +10,15 @@ services:
     command: go run /usr/src/app/users-api/cmd/combined/combined.go
     working_dir: /usr/src/app
 
+  email-notifier:
+    image: golang:1.20-alpine
+    depends_on:
+      - kafka
+    volumes:
+      - ./:/usr/src/app
+    command: go run /usr/src/app/email-notifier/cmd/main.go /usr/src/app/email-notifier/cmd/wire_gen.go
+    working_dir: /usr/src/app
+
   orders-api:
     image: golang:1.20-alpine
     links:

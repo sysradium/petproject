@@ -64,7 +64,9 @@ func NewCQRSFacade(
 		CommandsSubscriberConstructor: func(handlerName string) (message.Subscriber, error) {
 			return subscriber, nil
 		},
-		GenerateEventsTopic:   func(eventName string) string { return "events" },
+		GenerateEventsTopic: func(eventName string) string {
+			return eventName
+		},
 		EventsPublisher:       publisher,
 		Router:                router,
 		GenerateCommandsTopic: func(commandName string) string { return commandName },
