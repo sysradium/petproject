@@ -10,7 +10,7 @@ import (
 	"github.com/sysradium/petproject/orders-api/internal/app"
 	"github.com/sysradium/petproject/orders-api/internal/app/commands"
 	"github.com/sysradium/petproject/orders-api/internal/app/queries"
-	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
+	pbUsers "github.com/sysradium/petproject/users-api/api/users/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

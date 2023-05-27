@@ -12,7 +12,7 @@ import (
 	"github.com/sysradium/petproject/orders-api/internal/app/server"
 	"github.com/sysradium/petproject/orders-api/internal/ports"
 	"github.com/sysradium/petproject/orders-api/internal/providers"
-	"github.com/sysradium/petproject/users-api/proto/users/v1"
+	"github.com/sysradium/petproject/users-api/api/users/v1"
 )
 
 // Injectors from wire.go:

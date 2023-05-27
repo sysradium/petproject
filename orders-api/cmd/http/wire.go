@@ -13,7 +13,7 @@ import (
 	"github.com/sysradium/petproject/orders-api/internal/domain/order"
 	"github.com/sysradium/petproject/orders-api/internal/ports"
 	"github.com/sysradium/petproject/orders-api/internal/providers"
-	pbUsers "github.com/sysradium/petproject/users-api/proto/users/v1"
+	pbUsers "github.com/sysradium/petproject/users-api/api/users/v1"
 	"google.golang.org/grpc"
 )
 

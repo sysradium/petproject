@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
 
 package proto.users.v1;
 
@@ -49,5 +50,5 @@ message User {
   string username = 1;
   string email = 2;
   google.protobuf.Timestamp registered_at = 3;
-  string id = 4;
+  string id = 4 [(validate.rules).string.uuid = true];
 }
