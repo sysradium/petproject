@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
-	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
+	pb "github.com/sysradium/petproject/users-api/api/users/v1"
 )
 
 type User struct {

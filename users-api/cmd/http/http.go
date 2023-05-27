@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/protojson"
 
-	gw "github.com/sysradium/petproject/users-api/proto/users/v1" // Update
+	gw "github.com/sysradium/petproject/users-api/api/users/v1"
 )
 
 var (

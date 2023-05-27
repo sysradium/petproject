@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
+	pb "github.com/sysradium/petproject/users-api/api/users/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

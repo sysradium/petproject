@@ -3,9 +3,7 @@ syntax = "proto3";
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/sysradium/petproject/users-api/proto/users1/v1;usersv1";
-
-package users.v1;
+package proto.users.v1;
 
 service UsersService {
   rpc Get(GetRequest) returns (GetResponse) {

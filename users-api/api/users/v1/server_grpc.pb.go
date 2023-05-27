@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: users/v1/server.proto
+// source: api/users/v1/server.proto
 
 package usersv1
 
@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UsersService_Get_FullMethodName    = "/users.v1.UsersService/Get"
-	UsersService_List_FullMethodName   = "/users.v1.UsersService/List"
-	UsersService_Create_FullMethodName = "/users.v1.UsersService/Create"
+	UsersService_Get_FullMethodName    = "/proto.users.v1.UsersService/Get"
+	UsersService_List_FullMethodName   = "/proto.users.v1.UsersService/List"
+	UsersService_Create_FullMethodName = "/proto.users.v1.UsersService/Create"
 )
 
 // UsersServiceClient is the client API for UsersService service.
@@ -162,7 +162,7 @@ func _UsersService_Create_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UsersService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "users.v1.UsersService",
+	ServiceName: "proto.users.v1.UsersService",
 	HandlerType: (*UsersServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -179,5 +179,5 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "users/v1/server.proto",
+	Metadata: "api/users/v1/server.proto",
 }

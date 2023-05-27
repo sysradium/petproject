@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	pb "github.com/sysradium/petproject/users-api/api/users/v1"
 	"github.com/sysradium/petproject/users-api/internal/storage"
 	"github.com/sysradium/petproject/users-api/internal/storage/models"
-	pb "github.com/sysradium/petproject/users-api/proto/users/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
