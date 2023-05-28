@@ -10,12 +10,14 @@ import (
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/sysradium/petproject/orders-api/api"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 )
 
 func NewEcho() *echo.Echo {
 	e := echo.New()
 	e.HideBanner = true
 	e.Logger.SetLevel(log.DEBUG)
+	e.Use(otelecho.Middleware("orders"))
 
 	swagger, err := api.GetSwagger()
 	if err != nil {

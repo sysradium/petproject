@@ -3,12 +3,20 @@ version: "2"
 services:
   users-api:
     image: golang:1.20-alpine
+    links:
+      - jaeger:jaeger
     depends_on:
       - kafka
+      - jaeger
     volumes:
       - ./:/usr/src/app
     command: go run /usr/src/app/users-api/cmd/combined/combined.go
     working_dir: /usr/src/app
+    environment:
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=users-api
+    ports:
+      - "127.0.0.1:8080:8080"
 
   email-notifier:
     image: golang:1.20-alpine
@@ -24,6 +32,7 @@ services:
     links:
       - users-api:users-api
       - kafka:kafka
+      - jaeger:jaeger
     depends_on:
       - kafka
       - users-api
@@ -31,8 +40,17 @@ services:
       - ./:/usr/src/app
     command: go run /usr/src/app/orders-api/cmd/http/http.go /usr/src/app/orders-api/cmd/http/wire_gen.go
     working_dir: /usr/src/app
+    environment:
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=orders-api
     ports:
       - "127.0.0.1:8081:8081"
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.45
+    ports:
+      - "14268:14268"
+      - "127.0.0.1:16686:16686"
 
   kafka:
     image: docker.io/bitnami/kafka:3.4

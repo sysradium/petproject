@@ -13,6 +13,8 @@ import (
 	pb "github.com/sysradium/petproject/users-api/api/users/v1"
 	"github.com/sysradium/petproject/users-api/internal/app/server"
 	"github.com/sysradium/petproject/users-api/internal/storage/ephemeral"
+	"github.com/uptrace/opentelemetry-go-extra/otelplay"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
@@ -39,7 +41,13 @@ func main() {
 		}),
 	)
 
-	grpcServer := grpc.NewServer()
+	shutdown := otelplay.ConfigureOpentelemetry(ctx)
+	defer shutdown()
+
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
+	)
 	hdlr := server.New(
 		server.WithLogger(logger),
 		server.WithStorage(ephemeral.New()),

@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"log"
+
+	"github.com/uptrace/opentelemetry-go-extra/otelplay"
 )
 
 func main() {
@@ -13,6 +16,9 @@ func main() {
 		log.Fatal(err)
 	}
 	defer cleanup()
+
+	shutdown := otelplay.ConfigureOpentelemetry(context.Background())
+	defer shutdown()
 
 	server.Register()
 	if err := server.Start(); err != nil {

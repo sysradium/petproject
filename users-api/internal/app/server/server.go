@@ -9,6 +9,8 @@ import (
 	pb "github.com/sysradium/petproject/users-api/api/users/v1"
 	"github.com/sysradium/petproject/users-api/internal/storage"
 	"github.com/sysradium/petproject/users-api/internal/storage/models"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -35,7 +37,11 @@ func (s *Server) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateR
 }
 
 func (s *Server) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
-	rsp, err := s.st.Get(ctx, uuid.MustParse(req.Id))
+	uID, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+	rsp, err := s.st.Get(ctx, uID)
 	if err == nil {
 		return &pb.GetResponse{
 			User: rsp.ToProto(),
@@ -50,7 +56,6 @@ func (s *Server) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, 
 }
 
 func (s *Server) List(ctx context.Context, _ *pb.ListRequest) (*pb.ListResponse, error) {
-
 	users, err := s.st.List(ctx)
 	if err != nil {
 		s.logger.Errorf("can not get users: %+v", err)
@@ -62,6 +67,12 @@ func (s *Server) List(ctx context.Context, _ *pb.ListRequest) (*pb.ListResponse,
 	for i, u := range users {
 		rspUsers[i] = u.ToProto()
 	}
+
+	span := trace.SpanFromContext(ctx)
+	span.AddEvent("did some stuff")
+	span.SetAttributes(
+		attribute.Int("received-users", len(users)),
+	)
 
 	return &pb.ListResponse{
 		Users: rspUsers,
