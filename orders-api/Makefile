@@ -11,3 +11,6 @@ test::
 
 run::
 	go run cmd/http/http.go cmd/http/wire_gen.go
+
+build::
+	go build ./cmd/http/http.go ./cmd/http/wire_gen.go
