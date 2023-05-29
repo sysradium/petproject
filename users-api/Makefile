@@ -6,6 +6,9 @@ GO_LDFLAGS := -w -s
 proto:: 
 	buf generate
 
+test::
+	go test -v ./...
+
 build: $(CMD_GO)
 
 $(CMD_GO): %_cmd:
